@@ -35,7 +35,7 @@ public class MainUI extends JFrame {
         add(getTitle("MyScanner", false));
         add(getInputBox(false));
         setDisplayTable(new String[]{"port", "protocol", "state", "service"}, true);
-        addData();
+//        addData();
         add(scrollTable);
         setResizable(false);
         setVisible(true);
@@ -68,13 +68,14 @@ public class MainUI extends JFrame {
     }
 
     private void addData() {
-        DefaultTableModel model = (DefaultTableModel) table.getModel();
-        String[] record = new String[4];
-        record[0] = "80";
-        record[1] = "tcp";
-        record[2] = "ok";
-        record[3] = "intelliJ";
-        model.addRow(record);
+//        데이터 추가는 아래와 같이
+//        DefaultTableModel model = (DefaultTableModel) table.getModel();
+//        String[] record = new String[4];
+//        record[0] = "80";
+//        record[1] = "tcp";
+//        record[2] = "ok";
+//        record[3] = "intelliJ";
+//        model.addRow(record);
     }
 
     private void setNextAxisY(int axisY) {
