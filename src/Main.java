@@ -1,29 +1,21 @@
+import scanner.Scanner;
+import scanner.Worker;
+
+import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
+
+    private static List<Integer> portList = new ArrayList<>();
+
     public static void main(String[] args) {
+        Scanner scanner = new Scanner(5, 100, 500);
+//        scanner.setWaitingWorker();
+        scanner.addWorker();
+        scanner.portScan();
 
-        InetAddress addr = null;
-        Socket socket = null;
-
-        try {
-            addr = InetAddress.getLocalHost();
-            System.out.println(addr.getHostAddress());
-            for(int p = 130; p<140; p++) {
-                try {
-                    socket = new Socket("localhost", p);
-                    System.out.println("Port " + p + " is open");
-                }catch(Exception e) {
-                    continue;
-                }
-                socket.close();
-
-
-            }
-        }catch(Exception e) {
-            e.printStackTrace();
-        }
-
-
+        System.out.println(scanner.getPortList());
     }
 }
