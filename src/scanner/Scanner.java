@@ -1,5 +1,8 @@
 package scanner;
 
+import common.core.ScanningObserver;
+import observe.WorkerObserver;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,14 +20,18 @@ public class Scanner {
     private int START_PORT = DEFAULT_START_PORT;
     private int END_PORT = DEFAULT_END_PORT;
 
+    private ScanningObserver observer = null;
     private boolean IS_WAITING = false;
 
-    public Scanner() {}
+    public Scanner() {
+        observer = new WorkerObserver();
+    }
 
     public Scanner(int workerCounts) {
         if(workerCounts == 0) {
             throw new RuntimeException("0 is not proper arguments");
         }
+        observer = new WorkerObserver();
         WORKER_CNT = workerCounts;
     }
 
@@ -32,6 +39,7 @@ public class Scanner {
         if(start > end) {
             throw new RuntimeException("invalid scan range");
         }
+        observer = new WorkerObserver();
         START_PORT = start;
         END_PORT = end;
     }
@@ -50,12 +58,13 @@ public class Scanner {
     }
 
     public void addWorker() {
+
         Worker worker = null;
         final int RANGE = END_PORT - START_PORT;
         final int SEQ = RANGE / WORKER_CNT;
         final int REST_PORT_CNT = RANGE - (SEQ*WORKER_CNT);
         for(int i = 0; i<WORKER_CNT; i++) {
-            worker = new Worker();
+            worker = new Worker(observer);
             worker.setRange(
                     i == 0 ? START_PORT : START_PORT+1,
                     i != WORKER_CNT-1 ? START_PORT+=SEQ : (START_PORT+=SEQ)+REST_PORT_CNT
@@ -77,32 +86,17 @@ public class Scanner {
         });
     }
 
-    public void showEachWorkerRange() {
+    public void showEveryWorkerRange() {
         WORKER_LIST.forEach(Worker -> {
             Worker.showRange();
         });
     }
 
     public List<Integer> getPortList() {
-        concatScanList();
-        return OPENED_PORT_LIST;
-    }
-
-
-    private void concatScanList() {
-        WORKER_LIST.forEach(Worker -> {
-            OPENED_PORT_LIST.addAll(Worker.getPortList());
-        });
-        OPENED_PORT_LIST
+        return observer.getPortList()
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
     }
 
-
 }
-//            System.out.println("====================================");
-//            System.out.println("start: " + (i == 0 ? START_PORT : START_PORT+1));
-//            System.out.print("END: ");
-//            System.out.println(i != WORKER_CNT-1 ? START_PORT+=SEQ : (START_PORT+=SEQ)+REST_PORT_CNT);
-//            System.out.println("rest: " + REST_PORT_CNT);

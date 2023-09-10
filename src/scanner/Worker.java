@@ -1,5 +1,8 @@
 package scanner;
 
+import common.core.ScanningObserver;
+import observe.WorkerObserver;
+
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -7,15 +10,17 @@ import java.util.List;
 
 public class Worker {
 
-    private final List<Integer> PORT_LIST = new ArrayList<>();
+//    private final List<Integer> PORT_LIST = new ArrayList<>();
     private int START_PORT;
     private int END_PORT;
     private Thread worker;
 
+    private ScanningObserver observer;
+
     private Socket socket = null;
 
-    public Worker() {
-
+    public Worker(ScanningObserver observer) {
+        this.observer = observer;
     }
 
     public void setRange(int start, int end) {
@@ -29,9 +34,8 @@ public class Worker {
         }
         for(int port=START_PORT; port<=END_PORT; port++) {
             try {
-                System.out.println(worker.getName() + ": " + port);
                 socket = new Socket("localhost", port);
-                PORT_LIST.add(port);
+                observer.successScan(port);
                 socket.close();
             }catch(Exception e){
                 continue;
@@ -58,9 +62,9 @@ public class Worker {
         worker.start();
     }
 
-    public List<Integer> getPortList() {
-        return PORT_LIST;
-    }
+//    public List<Integer> getPortList() {
+//        return PORT_LIST;
+//    }
 
     private void setWork() {
         Runnable run = new Thread(() -> work());
